@@ -200,6 +200,36 @@
 
   .reward-box { text-align: center; }
   .reward-box .emoji { font-size: 4rem; }
+  .study-card {
+    text-align: center;
+    background: linear-gradient(145deg, #f5f7ff, #fff7fb);
+    border-radius: 20px;
+    padding: 20px 16px;
+    margin-bottom: 16px;
+    border: 3px solid #ececff;
+  }
+  .study-image {
+    font-size: 6rem;
+    line-height: 1;
+    margin: 8px 0 14px;
+    filter: drop-shadow(0 8px 0 rgba(0, 0, 0, .12));
+  }
+  .study-word {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--purple);
+    margin-bottom: 8px;
+  }
+  .study-meaning {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .study-tip {
+    color: var(--muted);
+    font-weight: 700;
+    font-size: .95rem;
+  }
   .bonus-field {
     position: relative;
     height: 360px;
@@ -225,6 +255,69 @@
   }
   .bonus-hud { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: center; }
   .bonus-hud div { background: #f5f6ff; border-radius: 14px; padding: 12px; font-weight: 800; }
+  .arcade-tabs { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; margin-bottom: 14px; }
+  .arcade-tab { width: 100%; }
+  .arcade-tab.active { outline: 4px solid rgba(255, 255, 255, .45); filter: brightness(1.08); }
+  .arcade-panel { display: none; }
+  .arcade-panel.active { display: block; }
+  .game-field {
+    position: relative;
+    height: 340px;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 3px solid #e9e9ff;
+    background: linear-gradient(160deg, #f7f8ff, #fff6fc);
+  }
+  .balloon {
+    position: absolute;
+    font-size: 2.8rem;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+    border: none;
+    background: none;
+  }
+  .memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .memory-card {
+    height: 64px;
+    border-radius: 14px;
+    border: 3px solid #e4e6ff;
+    background: #fff;
+    font-size: 1.6rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .memory-card.done { background: #e8f9ef; border-color: var(--green); }
+  .memory-card.open { background: #fff9d6; }
+  .mole-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .mole-hole {
+    height: 78px;
+    border-radius: 14px;
+    border: 3px solid #dde0ff;
+    background: #f8f9ff;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+  .tap-target {
+    position: absolute;
+    width: 78px;
+    height: 78px;
+    border-radius: 999px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 6px 0 rgba(0, 0, 0, .15);
+    cursor: pointer;
+  }
   .confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 50; }
   .confetti i {
     position: absolute; top: -20px; width: 12px; height: 12px; opacity: .95;
@@ -263,12 +356,16 @@
           <span class="emoji">🔊</span>
           <span class="label"><b>3. 듣고 뜻 고르기</b><span>단어를 듣고 알맞은 뜻을 골라요</span></span>
         </button>
+        <button class="btn orange menu-btn" onclick="showStudyMode()">
+          <span class="emoji">🧠</span>
+          <span class="label"><b>4. 단어+그림 공부</b><span>단어·한글·그림을 함께 보며 연상해요</span></span>
+        </button>
       </div>
     </div>
     <div class="card" style="text-align:center;">
-      <span class="badge" id="unlockBadge">💯 1번과 2번을 모두 100점 맞히면 별 잡기 게임이 열려요!</span>
+      <span class="badge" id="unlockBadge">💯 1~3번 게임 중 2개를 100점 맞으면 보너스 게임 창이 열려요!</span>
       <div class="row-actions" id="bonusMenuAction" style="display:none; margin-top:14px;">
-        <button class="btn orange full" onclick="showBonusGame()">⭐ 별 잡기 게임 하기</button>
+        <button class="btn orange full" onclick="showBonusGame()">🎮 보너스 게임 창 열기</button>
       </div>
     </div>
   </section>
@@ -289,6 +386,26 @@
         <button class="btn green full" onclick="saveSetup()">💾 저장하고 시작하기</button>
       </div>
       <p class="hint" id="saveMsg" style="text-align:center; color:var(--green); font-weight:700;"></p>
+    </div>
+  </section>
+
+  <!-- ===================== STUDY ===================== -->
+  <section id="study" class="screen">
+    <div class="card">
+      <div class="top-bar">
+        <h2>🧠 단어+그림 공부</h2>
+        <button class="btn gray small" onclick="showMenu()">← 뒤로</button>
+      </div>
+      <p class="hint">단어, 뜻, 그림을 같이 보며 머릿속에서 연결해요.</p>
+
+      <div class="study-card" id="studyCard"></div>
+      <p class="hint" id="studyProgress" style="text-align:center; margin-bottom:8px;"></p>
+
+      <div class="row-actions">
+        <button class="btn blue full" onclick="prevStudyCard()">◀ 이전 카드</button>
+        <button class="btn green full" onclick="nextStudyCard()">다음 카드 ▶</button>
+        <button class="btn purple full" onclick="shuffleStudyCards()">🔀 랜덤 순서</button>
+      </div>
     </div>
   </section>
 
@@ -319,9 +436,9 @@
     </div>
     <div class="card reward-box" id="rewardCard" style="display:none;">
       <div class="emoji">🎉⭐🎉</div>
-      <h2 style="color:var(--accent)" id="rewardTitle">별 잡기 게임이 열렸어요!</h2>
-      <p class="hint" id="rewardText">1번과 2번을 모두 100점 맞혔어요. 이제 보너스 게임을 할 수 있어요!</p>
-      <button class="btn orange full" id="rewardBtn">⭐ 별 잡기 게임 하기</button>
+      <h2 style="color:var(--accent)" id="rewardTitle">보너스 게임 창이 열렸어요!</h2>
+      <p class="hint" id="rewardText">1~3번 게임 중 2개를 100점 맞았어요. 이제 미니게임 5개를 모두 플레이할 수 있어요!</p>
+      <button class="btn orange full" id="rewardBtn">🎮 보너스 게임 창 열기</button>
     </div>
     <div class="card">
       <div class="row-actions">
@@ -335,17 +452,67 @@
   <section id="bonus" class="screen">
     <div class="card">
       <div class="top-bar">
-        <h2>⭐ 별 잡기 게임</h2>
-        <button class="btn gray small" onclick="stopBonusGame(); showMenu();">🏠 처음으로</button>
+        <h2>🎮 보너스 게임 창</h2>
+        <button class="btn gray small" onclick="stopAllArcadeGames(); showMenu();">🏠 처음으로</button>
       </div>
-      <p class="hint">반짝이는 별을 빠르게 눌러 점수를 모아요!</p>
-      <div class="bonus-hud">
-        <div>점수 <span id="bonusScore">0</span></div>
-        <div>남은 시간 <span id="bonusTime">20</span>초</div>
+
+      <p class="hint">아래에서 원하는 미니게임을 선택해 바로 플레이해요!</p>
+      <div class="arcade-tabs">
+        <button class="btn orange small arcade-tab" id="tabStar" onclick="openArcadeGame('star')">⭐ 별 잡기</button>
+        <button class="btn red small arcade-tab" id="tabBalloon" onclick="openArcadeGame('balloon')">🎈 풍선 팡</button>
+        <button class="btn purple small arcade-tab" id="tabMemory" onclick="openArcadeGame('memory')">🧩 카드 짝맞추기</button>
+        <button class="btn green small arcade-tab" id="tabMole" onclick="openArcadeGame('mole')">🐹 두더지 잡기</button>
+        <button class="btn blue small arcade-tab" id="tabTap" onclick="openArcadeGame('tap')">⚡ 번개 터치</button>
       </div>
-      <div class="bonus-field" id="bonusField"></div>
-      <div class="row-actions">
-        <button class="btn orange full" id="bonusStartBtn" onclick="startBonusGame()">▶️ 시작</button>
+
+      <div id="panelStar" class="arcade-panel">
+        <p class="hint">반짝이는 별을 빠르게 눌러 점수를 모아요.</p>
+        <div class="bonus-hud">
+          <div>점수 <span id="bonusScore">0</span></div>
+          <div>남은 시간 <span id="bonusTime">20</span>초</div>
+        </div>
+        <div class="bonus-field" id="bonusField"></div>
+        <div class="row-actions"><button class="btn orange full" id="bonusStartBtn" onclick="startBonusGame()">▶️ 시작</button></div>
+      </div>
+
+      <div id="panelBalloon" class="arcade-panel">
+        <p class="hint">튀어나오는 풍선을 눌러 터뜨려요!</p>
+        <div class="bonus-hud">
+          <div>점수 <span id="balloonScore">0</span></div>
+          <div>남은 시간 <span id="balloonTime">20</span>초</div>
+        </div>
+        <div class="game-field" id="balloonField"></div>
+        <div class="row-actions"><button class="btn red full" id="balloonStartBtn" onclick="startBalloonGame()">▶️ 시작</button></div>
+      </div>
+
+      <div id="panelMemory" class="arcade-panel">
+        <p class="hint">같은 그림 카드 4쌍을 찾아요!</p>
+        <div class="bonus-hud">
+          <div>맞춘 쌍 <span id="memoryPairs">0</span>/4</div>
+          <div>시도 <span id="memoryMoves">0</span>번</div>
+        </div>
+        <div class="memory-grid" id="memoryGrid"></div>
+        <div class="row-actions"><button class="btn purple full" onclick="startMemoryGame()">🔁 새로 시작</button></div>
+      </div>
+
+      <div id="panelMole" class="arcade-panel">
+        <p class="hint">나오는 두더지를 재빨리 눌러요!</p>
+        <div class="bonus-hud">
+          <div>점수 <span id="moleScore">0</span></div>
+          <div>남은 시간 <span id="moleTime">20</span>초</div>
+        </div>
+        <div class="mole-grid" id="moleGrid"></div>
+        <div class="row-actions"><button class="btn green full" id="moleStartBtn" onclick="startMoleGame()">▶️ 시작</button></div>
+      </div>
+
+      <div id="panelTap" class="arcade-panel">
+        <p class="hint">도망가는 버튼을 터치해 점수를 올려요!</p>
+        <div class="bonus-hud">
+          <div>점수 <span id="tapScore">0</span></div>
+          <div>남은 시간 <span id="tapTime">15</span>초</div>
+        </div>
+        <div class="game-field" id="tapField"></div>
+        <div class="row-actions"><button class="btn blue full" id="tapStartBtn" onclick="startTapGame()">▶️ 시작</button></div>
       </div>
     </div>
   </section>
@@ -356,7 +523,7 @@
 <script>
 /* =========================================================
    Word Master — 7세 영어 단어 시험 게임
-  3가지 단어 게임 + 별 잡기 보너스 게임
+  4가지 학습/게임 + 별 잡기 보너스 게임
    ========================================================= */
 
 const STORAGE_KEY = "wordMasterData_lesson16";
@@ -381,11 +548,12 @@ const DEFAULT_DATA = {
     { word: "train", meaning: "a long vehicle that runs on tracks.",             sentence: "The ___ runs on tracks." },
     { word: "sail",  meaning: "to move on water in a boat with wind",           sentence: "We can ___ on the blue sea." },
   ],
-  perfectScores: { meaning: false, sentence: false }
+  perfectScores: { meaning: false, sentence: false, listening: false }
 };
 
 let data = loadData();
 let quiz = null; // 진행 중인 퀴즈 상태
+let study = { order: [], idx: 0 };
 
 /* ---------- 저장/불러오기 ---------- */
 function loadData() {
@@ -399,6 +567,7 @@ function loadData() {
           perfectScores: {
             meaning: Boolean(parsed.perfectScores && parsed.perfectScores.meaning),
             sentence: Boolean(parsed.perfectScores && parsed.perfectScores.sentence),
+            listening: Boolean(parsed.perfectScores && parsed.perfectScores.listening),
           },
         };
       }
@@ -427,6 +596,81 @@ function showSetup() {
   renderWordRows();
   document.getElementById("saveMsg").textContent = "";
   show("setup");
+}
+
+/* ---------- 그림 연상 학습 ---------- */
+function showStudyMode() {
+  if (data.words.length === 0) {
+    alert("먼저 단어를 1개 이상 준비해 주세요!");
+    return;
+  }
+  study.order = [...Array(data.words.length).keys()];
+  study.idx = 0;
+  renderStudyCard();
+  show("study");
+}
+
+function currentStudyWord() {
+  if (!study.order.length) return null;
+  return data.words[study.order[study.idx]];
+}
+
+function getStudyEmoji(word) {
+  const map = {
+    chain: "⛓️",
+    gain: "🏆",
+    eight: "8️⃣",
+    tail: "🐈",
+    paint: "🎨",
+    nail: "🔨",
+    pail: "🪣",
+    they: "👫",
+    snail: "🐌",
+    rain: "🌧️",
+    wait: "⏳",
+    mail: "📫",
+    train: "🚂",
+    sail: "⛵"
+  };
+  return map[(word || "").toLowerCase()] || "🖼️";
+}
+
+function renderStudyCard() {
+  const card = document.getElementById("studyCard");
+  const progress = document.getElementById("studyProgress");
+  const w = currentStudyWord();
+  if (!w) {
+    card.innerHTML = `<p class="empty-note">공부할 단어가 없어요.</p>`;
+    progress.textContent = "";
+    return;
+  }
+  card.innerHTML = `
+    <div class="study-image">${getStudyEmoji(w.word)}</div>
+    <div class="study-word">${escapeText(w.word)}</div>
+    <div class="study-meaning">${escapeText(w.meaning)}</div>
+    <p class="study-tip">그림을 떠올리며 단어를 소리 내어 읽어보세요!</p>
+    <button class="btn small purple" onclick="speak('${escapeAttr(w.word)}')">🔊 발음 듣기</button>
+  `;
+  progress.textContent = `${study.idx + 1} / ${study.order.length} 카드`;
+}
+
+function prevStudyCard() {
+  if (!study.order.length) return;
+  study.idx = (study.idx - 1 + study.order.length) % study.order.length;
+  renderStudyCard();
+}
+
+function nextStudyCard() {
+  if (!study.order.length) return;
+  study.idx = (study.idx + 1) % study.order.length;
+  renderStudyCard();
+}
+
+function shuffleStudyCards() {
+  if (!study.order.length) return;
+  study.order = shuffle(study.order);
+  study.idx = 0;
+  renderStudyCard();
 }
 
 /* ---------- 설정: 단어 행 ---------- */
@@ -491,7 +735,7 @@ function saveSetup() {
 }
 
 /* HTML 이스케이프 */
-function escapeAttr(s) { return String(s || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;"); }
+function escapeAttr(s) { return String(s || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;"); }
 function escapeText(s) { return String(s || "").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 /* ---------- 퀴즈 시작 ---------- */
@@ -673,20 +917,25 @@ function quitQuiz() {
 }
 
 function isCoreGameMode(mode) {
-  return mode === "meaning" || mode === "sentence";
+  return mode === "meaning" || mode === "sentence" || mode === "listening";
 }
 
 function isBonusUnlocked() {
-  return Boolean(data.perfectScores && data.perfectScores.meaning && data.perfectScores.sentence);
+  const perfectScores = data.perfectScores || {};
+  return countPerfectScores(perfectScores) >= 2;
+}
+
+function countPerfectScores(perfectScores) {
+  return ["meaning", "sentence", "listening"].filter(mode => Boolean(perfectScores[mode])).length;
 }
 
 function updateUnlockStatus() {
-  const perfectScores = data.perfectScores || { meaning: false, sentence: false };
-  const count = Number(Boolean(perfectScores.meaning)) + Number(Boolean(perfectScores.sentence));
-  const unlocked = count === 2;
+  const perfectScores = data.perfectScores || { meaning: false, sentence: false, listening: false };
+  const count = countPerfectScores(perfectScores);
+  const unlocked = count >= 2;
   document.getElementById("unlockBadge").textContent = unlocked
-    ? "⭐ 별 잡기 게임이 열렸어요!"
-    : `💯 1번과 2번을 모두 100점 맞히면 별 잡기 게임이 열려요! (${count}/2 완료)`;
+    ? "🎮 보너스 게임 창이 열렸어요!"
+    : `💯 1~3번 게임 중 2개를 100점 맞으면 보너스 게임 창이 열려요! (${count}/2 완료)`;
   document.getElementById("bonusMenuAction").style.display = unlocked ? "flex" : "none";
 }
 
@@ -741,21 +990,89 @@ function finishQuiz() {
   if (score === 100) launchConfetti();
 }
 
-/* ---------- 보너스 게임 ---------- */
+/* ---------- 보너스 게임 창 ---------- */
+let currentArcadeGame = "star";
+
+// 별 잡기
 let bonusScore = 0;
 let bonusTime = 20;
 let bonusTimer = null;
 let bonusSpawner = null;
 
+// 풍선 팡
+let balloonScore = 0;
+let balloonTime = 20;
+let balloonTimer = null;
+let balloonSpawner = null;
+
+// 카드 짝맞추기
+let memoryDeck = [];
+let memoryOpen = [];
+let memoryMoves = 0;
+let memoryPairs = 0;
+let memoryBusy = false;
+
+// 두더지 잡기
+let moleScore = 0;
+let moleTime = 20;
+let moleTimer = null;
+let moleSpawner = null;
+let activeMole = -1;
+
+// 번개 터치
+let tapScore = 0;
+let tapTime = 15;
+let tapTimer = null;
+
 function showBonusGame() {
   if (!isBonusUnlocked()) {
-    alert("1번과 2번을 모두 100점 맞히면 열려요!");
+    alert("1~3번 게임 중 2개를 100점 맞으면 열려요!");
     return;
   }
-  resetBonusGame();
   show("bonus");
+  openArcadeGame(currentArcadeGame || "star");
 }
 
+function openArcadeGame(game) {
+  currentArcadeGame = game;
+  stopAllArcadeGames();
+
+  const panelMap = {
+    star: "panelStar",
+    balloon: "panelBalloon",
+    memory: "panelMemory",
+    mole: "panelMole",
+    tap: "panelTap"
+  };
+  const tabMap = {
+    star: "tabStar",
+    balloon: "tabBalloon",
+    memory: "tabMemory",
+    mole: "tabMole",
+    tap: "tabTap"
+  };
+
+  Object.values(panelMap).forEach(id => document.getElementById(id).classList.remove("active"));
+  Object.values(tabMap).forEach(id => document.getElementById(id).classList.remove("active"));
+
+  document.getElementById(panelMap[game]).classList.add("active");
+  document.getElementById(tabMap[game]).classList.add("active");
+
+  if (game === "star") resetBonusGame();
+  if (game === "balloon") resetBalloonGame();
+  if (game === "memory") startMemoryGame();
+  if (game === "mole") { setupMoleGrid(); resetMoleGame(); }
+  if (game === "tap") { setupTapField(); resetTapGame(); }
+}
+
+function stopAllArcadeGames() {
+  stopBonusGame();
+  stopBalloonGame();
+  stopMoleGame();
+  stopTapGame();
+}
+
+// ---- 1) 별 잡기 ----
 function resetBonusGame() {
   stopBonusGame();
   bonusScore = 0;
@@ -769,12 +1086,7 @@ function resetBonusGame() {
 }
 
 function startBonusGame() {
-  stopBonusGame();
-  bonusScore = 0;
-  bonusTime = 20;
-  document.getElementById("bonusScore").textContent = bonusScore;
-  document.getElementById("bonusTime").textContent = bonusTime;
-  document.getElementById("bonusField").innerHTML = "";
+  resetBonusGame();
   const btn = document.getElementById("bonusStartBtn");
   btn.disabled = true;
   btn.textContent = "별을 잡아요!";
@@ -826,6 +1138,277 @@ function endBonusGame() {
   btn.disabled = false;
   btn.textContent = "🔁 다시 시작";
   if (bonusScore >= 18) launchConfetti();
+}
+
+// ---- 2) 풍선 팡 ----
+function resetBalloonGame() {
+  stopBalloonGame();
+  balloonScore = 0;
+  balloonTime = 20;
+  document.getElementById("balloonScore").textContent = balloonScore;
+  document.getElementById("balloonTime").textContent = balloonTime;
+  document.getElementById("balloonField").innerHTML = "";
+  const btn = document.getElementById("balloonStartBtn");
+  btn.disabled = false;
+  btn.textContent = "▶️ 시작";
+}
+
+function startBalloonGame() {
+  resetBalloonGame();
+  const btn = document.getElementById("balloonStartBtn");
+  btn.disabled = true;
+  btn.textContent = "풍선을 터뜨려요!";
+  spawnBalloon();
+  balloonSpawner = setInterval(spawnBalloon, 520);
+  balloonTimer = setInterval(() => {
+    balloonTime--;
+    document.getElementById("balloonTime").textContent = balloonTime;
+    if (balloonTime <= 0) endBalloonGame();
+  }, 1000);
+}
+
+function spawnBalloon() {
+  const field = document.getElementById("balloonField");
+  if (!field) return;
+  const b = document.createElement("button");
+  b.className = "balloon";
+  b.type = "button";
+  b.textContent = ["🎈", "🎈", "🎈", "🫧"][Math.floor(Math.random() * 4)];
+  b.style.left = (8 + Math.random() * 84) + "%";
+  b.style.top = (12 + Math.random() * 76) + "%";
+  b.onclick = () => {
+    balloonScore++;
+    document.getElementById("balloonScore").textContent = balloonScore;
+    b.remove();
+    playTone(true);
+  };
+  field.appendChild(b);
+  setTimeout(() => b.remove(), 950);
+}
+
+function stopBalloonGame() {
+  clearInterval(balloonTimer);
+  clearInterval(balloonSpawner);
+  balloonTimer = null;
+  balloonSpawner = null;
+}
+
+function endBalloonGame() {
+  stopBalloonGame();
+  document.getElementById("balloonField").innerHTML = `
+    <div class="question-box" style="margin:24px;">
+      <div class="result-emoji">${balloonScore >= 20 ? "🎊" : "🎈"}</div>
+      <h2>${balloonScore}개 터뜨렸어요!</h2>
+      <p class="hint">${balloonScore >= 20 ? "엄청 빨라요!" : "다시 도전해볼까요?"}</p>
+    </div>
+  `;
+  const btn = document.getElementById("balloonStartBtn");
+  btn.disabled = false;
+  btn.textContent = "🔁 다시 시작";
+}
+
+// ---- 3) 카드 짝맞추기 ----
+function startMemoryGame() {
+  const emojis = ["🐶", "🐱", "🐼", "🐸"];
+  memoryDeck = shuffle([...emojis, ...emojis]).map((emoji, i) => ({ id: i, emoji, open: false, done: false }));
+  memoryOpen = [];
+  memoryMoves = 0;
+  memoryPairs = 0;
+  memoryBusy = false;
+  document.getElementById("memoryMoves").textContent = memoryMoves;
+  document.getElementById("memoryPairs").textContent = memoryPairs;
+  renderMemoryGrid();
+}
+
+function renderMemoryGrid() {
+  const grid = document.getElementById("memoryGrid");
+  grid.innerHTML = memoryDeck.map((c, i) => `
+    <button class="memory-card ${c.done ? "done" : ""} ${c.open ? "open" : ""}" onclick="openMemoryCard(${i})" ${c.done ? "disabled" : ""}>
+      ${c.open || c.done ? c.emoji : "?"}
+    </button>
+  `).join("");
+}
+
+function openMemoryCard(i) {
+  if (memoryBusy) return;
+  const card = memoryDeck[i];
+  if (!card || card.done || card.open) return;
+  card.open = true;
+  memoryOpen.push(i);
+  renderMemoryGrid();
+  if (memoryOpen.length < 2) return;
+
+  memoryMoves++;
+  document.getElementById("memoryMoves").textContent = memoryMoves;
+  const [a, b] = memoryOpen;
+  if (memoryDeck[a].emoji === memoryDeck[b].emoji) {
+    memoryDeck[a].done = true;
+    memoryDeck[b].done = true;
+    memoryPairs++;
+    document.getElementById("memoryPairs").textContent = memoryPairs;
+    memoryOpen = [];
+    renderMemoryGrid();
+    playTone(true);
+    if (memoryPairs === 4) launchConfetti();
+    return;
+  }
+
+  memoryBusy = true;
+  setTimeout(() => {
+    memoryDeck[a].open = false;
+    memoryDeck[b].open = false;
+    memoryOpen = [];
+    memoryBusy = false;
+    renderMemoryGrid();
+  }, 550);
+}
+
+// ---- 4) 두더지 잡기 ----
+function setupMoleGrid() {
+  const grid = document.getElementById("moleGrid");
+  if (grid.childElementCount) return;
+  grid.innerHTML = "";
+  for (let i = 0; i < 9; i++) {
+    const btn = document.createElement("button");
+    btn.className = "mole-hole";
+    btn.type = "button";
+    btn.textContent = "🕳️";
+    btn.onclick = () => whackMole(i);
+    grid.appendChild(btn);
+  }
+}
+
+function resetMoleGame() {
+  stopMoleGame();
+  moleScore = 0;
+  moleTime = 20;
+  activeMole = -1;
+  document.getElementById("moleScore").textContent = moleScore;
+  document.getElementById("moleTime").textContent = moleTime;
+  renderMole();
+  const btn = document.getElementById("moleStartBtn");
+  btn.disabled = false;
+  btn.textContent = "▶️ 시작";
+}
+
+function startMoleGame() {
+  resetMoleGame();
+  const btn = document.getElementById("moleStartBtn");
+  btn.disabled = true;
+  btn.textContent = "두더지를 잡아요!";
+  moleSpawner = setInterval(() => {
+    activeMole = Math.floor(Math.random() * 9);
+    renderMole();
+  }, 520);
+  moleTimer = setInterval(() => {
+    moleTime--;
+    document.getElementById("moleTime").textContent = moleTime;
+    if (moleTime <= 0) endMoleGame();
+  }, 1000);
+}
+
+function renderMole() {
+  const holes = document.querySelectorAll("#moleGrid .mole-hole");
+  holes.forEach((h, i) => { h.textContent = i === activeMole ? "🐹" : "🕳️"; });
+}
+
+function whackMole(i) {
+  if (i !== activeMole || moleTime <= 0) return;
+  moleScore++;
+  document.getElementById("moleScore").textContent = moleScore;
+  activeMole = -1;
+  renderMole();
+  playTone(true);
+}
+
+function stopMoleGame() {
+  clearInterval(moleTimer);
+  clearInterval(moleSpawner);
+  moleTimer = null;
+  moleSpawner = null;
+}
+
+function endMoleGame() {
+  stopMoleGame();
+  activeMole = -1;
+  renderMole();
+  const btn = document.getElementById("moleStartBtn");
+  btn.disabled = false;
+  btn.textContent = "🔁 다시 시작";
+  if (moleScore >= 18) launchConfetti();
+}
+
+// ---- 5) 번개 터치 ----
+function setupTapField() {
+  const field = document.getElementById("tapField");
+  if (field.querySelector("#tapTarget")) return;
+  const target = document.createElement("button");
+  target.id = "tapTarget";
+  target.className = "tap-target";
+  target.type = "button";
+  target.textContent = "터치";
+  target.style.display = "none";
+  target.onclick = () => {
+    tapScore++;
+    document.getElementById("tapScore").textContent = tapScore;
+    moveTapTarget();
+    playTone(true);
+  };
+  field.appendChild(target);
+}
+
+function resetTapGame() {
+  stopTapGame();
+  tapScore = 0;
+  tapTime = 15;
+  document.getElementById("tapScore").textContent = tapScore;
+  document.getElementById("tapTime").textContent = tapTime;
+  const btn = document.getElementById("tapStartBtn");
+  btn.disabled = false;
+  btn.textContent = "▶️ 시작";
+  const target = document.getElementById("tapTarget");
+  if (target) target.style.display = "none";
+}
+
+function startTapGame() {
+  resetTapGame();
+  const btn = document.getElementById("tapStartBtn");
+  btn.disabled = true;
+  btn.textContent = "잡아보세요!";
+  const target = document.getElementById("tapTarget");
+  if (!target) return;
+  target.style.display = "block";
+  moveTapTarget();
+  tapTimer = setInterval(() => {
+    tapTime--;
+    document.getElementById("tapTime").textContent = tapTime;
+    if (tapTime <= 0) endTapGame();
+  }, 1000);
+}
+
+function moveTapTarget() {
+  const field = document.getElementById("tapField");
+  const target = document.getElementById("tapTarget");
+  if (!field || !target) return;
+  const maxX = Math.max(0, field.clientWidth - target.offsetWidth - 6);
+  const maxY = Math.max(0, field.clientHeight - target.offsetHeight - 6);
+  target.style.left = (Math.random() * maxX + 3) + "px";
+  target.style.top = (Math.random() * maxY + 3) + "px";
+}
+
+function stopTapGame() {
+  clearInterval(tapTimer);
+  tapTimer = null;
+}
+
+function endTapGame() {
+  stopTapGame();
+  const target = document.getElementById("tapTarget");
+  if (target) target.style.display = "none";
+  const btn = document.getElementById("tapStartBtn");
+  btn.disabled = false;
+  btn.textContent = "🔁 다시 시작";
+  if (tapScore >= 14) launchConfetti();
 }
 
 /* ---------- 발음 (Web Speech API) ---------- */
