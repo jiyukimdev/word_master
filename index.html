@@ -208,22 +208,58 @@
     margin-bottom: 16px;
     border: 3px solid #ececff;
   }
-  .study-image {
-    font-size: 6rem;
-    line-height: 1;
-    margin: 8px 0 14px;
-    filter: drop-shadow(0 8px 0 rgba(0, 0, 0, .12));
+  .study-visual-card {
+    position: relative;
+    background: #fff;
+    border-radius: 18px;
+    border: 3px solid #e7e7f5;
+    min-height: 180px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 22px rgba(20, 20, 50, .08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .study-visual-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(255,255,255,.85), rgba(245,248,255,.95));
+  }
+  .study-word-wrap {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 10px 8px;
   }
   .study-word {
     font-size: 2rem;
     font-weight: 900;
     color: var(--purple);
     margin-bottom: 8px;
+    letter-spacing: .5px;
+  }
+  .study-decor {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .14));
   }
   .study-meaning {
     font-size: 1.25rem;
     font-weight: 800;
     margin-bottom: 8px;
+  }
+  .study-sentence {
+    background: #fff;
+    border: 2px dashed #dedff2;
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin: 8px 0 10px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.45;
   }
   .study-tip {
     color: var(--muted);
@@ -635,6 +671,72 @@ function getStudyEmoji(word) {
   return map[(word || "").toLowerCase()] || "🖼️";
 }
 
+function getWordDecorations(word) {
+  const w = (word || "").toLowerCase();
+  const map = {
+    chain: [
+      { emoji: "⛓️", top: "30%", left: "18%", size: "2.1rem", rotate: "-12deg" },
+      { emoji: "🐶", top: "72%", left: "82%", size: "1.8rem", rotate: "8deg" }
+    ],
+    gain: [
+      { emoji: "🏆", top: "28%", left: "20%", size: "2rem", rotate: "-10deg" },
+      { emoji: "✨", top: "70%", left: "80%", size: "1.6rem", rotate: "10deg" }
+    ],
+    eight: [
+      { emoji: "8️⃣", top: "22%", left: "22%", size: "2rem", rotate: "-6deg" },
+      { emoji: "🖍️", top: "72%", left: "80%", size: "1.8rem", rotate: "12deg" }
+    ],
+    tail: [
+      { emoji: "🐈", top: "26%", left: "18%", size: "2rem", rotate: "-10deg" },
+      { emoji: "〰️", top: "72%", left: "80%", size: "1.7rem", rotate: "8deg" }
+    ],
+    paint: [
+      { emoji: "🎨", top: "26%", left: "18%", size: "2rem", rotate: "-8deg" },
+      { emoji: "🌼", top: "70%", left: "80%", size: "1.8rem", rotate: "10deg" }
+    ],
+    nail: [
+      { emoji: "🔨", top: "26%", left: "18%", size: "2rem", rotate: "-8deg" },
+      { emoji: "📍", top: "70%", left: "80%", size: "1.8rem", rotate: "8deg" }
+    ],
+    pail: [
+      { emoji: "🪣", top: "26%", left: "18%", size: "2rem", rotate: "-8deg" },
+      { emoji: "🏖️", top: "70%", left: "82%", size: "1.7rem", rotate: "8deg" }
+    ],
+    they: [
+      { emoji: "👫", top: "28%", left: "18%", size: "2rem", rotate: "-8deg" },
+      { emoji: "👭", top: "70%", left: "82%", size: "1.8rem", rotate: "8deg" }
+    ],
+    snail: [
+      { emoji: "🐌", top: "26%", left: "18%", size: "2rem", rotate: "-8deg" },
+      { emoji: "🍃", top: "70%", left: "82%", size: "1.7rem", rotate: "8deg" }
+    ],
+    rain: [
+      { emoji: "☁️", top: "24%", left: "18%", size: "2rem", rotate: "-8deg" },
+      { emoji: "💧", top: "70%", left: "82%", size: "1.8rem", rotate: "8deg" }
+    ],
+    wait: [
+      { emoji: "⏳", top: "24%", left: "18%", size: "2rem", rotate: "-8deg" },
+      { emoji: "🕒", top: "70%", left: "82%", size: "1.8rem", rotate: "8deg" }
+    ],
+    mail: [
+      { emoji: "📫", top: "24%", left: "18%", size: "2rem", rotate: "-8deg" },
+      { emoji: "✉️", top: "70%", left: "82%", size: "1.8rem", rotate: "8deg" }
+    ],
+    train: [
+      { emoji: "🚂", top: "24%", left: "18%", size: "2rem", rotate: "-8deg" },
+      { emoji: "🛤️", top: "72%", left: "82%", size: "1.7rem", rotate: "8deg" }
+    ],
+    sail: [
+      { emoji: "⛵", top: "24%", left: "18%", size: "2rem", rotate: "-8deg" },
+      { emoji: "🌊", top: "72%", left: "82%", size: "1.8rem", rotate: "8deg" }
+    ]
+  };
+  return map[w] || [
+    { emoji: getStudyEmoji(word), top: "25%", left: "18%", size: "2rem", rotate: "-8deg" },
+    { emoji: "✨", top: "70%", left: "82%", size: "1.7rem", rotate: "8deg" }
+  ];
+}
+
 function renderStudyCard() {
   const card = document.getElementById("studyCard");
   const progress = document.getElementById("studyProgress");
@@ -644,10 +746,18 @@ function renderStudyCard() {
     progress.textContent = "";
     return;
   }
+  const decorators = getWordDecorations(w.word)
+    .map(d => `<span class="study-decor" style="top:${d.top};left:${d.left};font-size:${d.size};transform:rotate(${d.rotate});">${d.emoji}</span>`)
+    .join("");
   card.innerHTML = `
-    <div class="study-image">${getStudyEmoji(w.word)}</div>
-    <div class="study-word">${escapeText(w.word)}</div>
+    <div class="study-visual-card">
+      ${decorators}
+      <div class="study-word-wrap">
+        <div class="study-word">${escapeText(w.word)}</div>
+      </div>
+    </div>
     <div class="study-meaning">${escapeText(w.meaning)}</div>
+    <div class="study-sentence">${escapeText(w.sentence || "")}</div>
     <p class="study-tip">그림을 떠올리며 단어를 소리 내어 읽어보세요!</p>
     <button class="btn small purple" onclick="speak('${escapeAttr(w.word)}')">🔊 발음 듣기</button>
   `;
