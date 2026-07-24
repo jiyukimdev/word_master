@@ -941,6 +941,8 @@ function renderStudyCard() {
     <button class="btn small purple" onclick="speak('${escapeAttr(w.word)}')">🔊 발음 듣기</button>
   `;
   progress.textContent = `${study.idx + 1} / ${study.order.length} 카드`;
+  // 카드가 나오면 단어 발음을 자동으로 들려줘요.
+  setTimeout(() => speak(w.word), 250);
 }
 
 function prevStudyCard() {
