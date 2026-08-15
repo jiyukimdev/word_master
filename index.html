@@ -636,6 +636,27 @@ const DEFAULT_LESSONS = [
     ],
     perfectScores: emptyScores(),
   },
+  {
+    // Level 2 · Lesson 21 (long i sound)
+    id: 21,
+    words: [
+      { word: "like",   meaning: "to enjoy something",                                  sentence: "I ___ to play with my friends." },
+      { word: "find",   meaning: "to see or get something",                              sentence: "I can ___ my lost toy." },
+      { word: "bike",   meaning: "a thing with two wheels you ride",                     sentence: "I ride my ___ to school." },
+      { word: "side",   meaning: "the part that is not the middle",                     sentence: "The cat is on the left ___ of the box." },
+      { word: "nine",   meaning: "a number after eight",                                sentence: "I have ___ apples." },
+      { word: "write",  meaning: "to make words with a pencil or pen",                  sentence: "I can ___ my name." },
+      { word: "mine",   meaning: "something that belongs to me",                       sentence: "This toy is ___." },
+      { word: "ride",   meaning: "to sit on and move with a bike, horse, or car",       sentence: "I can ___ my bike." },
+      { word: "white",  meaning: "a very light color, like snow",                      sentence: "Snow is ___." },
+      { word: "eye",    meaning: "the part of your body you use to see",               sentence: "I can see with my ___." },
+      { word: "hide",   meaning: "to go where others cannot see you",                   sentence: "I like to ___ behind the door." },
+      { word: "ice",    meaning: "very cold, hard water",                              sentence: "The water turned to ___." },
+      { word: "inside", meaning: "in something or in a place",                         sentence: "The toy is ___ the box." },
+      { word: "five",   meaning: "a number after four",                                sentence: "I have ___ fingers on one hand." },
+    ],
+    perfectScores: emptyScores(),
+  },
 ];
 
 let store = loadStore();
@@ -665,9 +686,14 @@ function loadStore() {
       const parsed = JSON.parse(raw);
       if (parsed && Array.isArray(parsed.lessons) && parsed.lessons.length) {
         const lessons = parsed.lessons.map((l, i) => normalizeLesson(l, i + 1));
-        const currentId = lessons.some(l => l.id === +parsed.currentId)
+        const previousLatestId = latestId(lessons);
+        const currentIdFromStore = lessons.some(l => l.id === +parsed.currentId)
           ? +parsed.currentId
           : latestId(lessons);
+        mergeDefaultLessons(lessons);
+        const currentId = latestId(lessons) > previousLatestId && currentIdFromStore === previousLatestId
+          ? latestId(lessons)
+          : currentIdFromStore;
         return { lessons, currentId };
       }
     }
@@ -686,17 +712,21 @@ function loadStore() {
   } catch (e) { /* 무시 */ }
 
   // 3) 기본 레슨 병합(이미 있는 id는 유지)
-  DEFAULT_LESSONS.forEach(def => {
-    if (!lessons.some(l => l.id === def.id)) {
-      lessons.push(JSON.parse(JSON.stringify(def)));
-    }
-  });
+  mergeDefaultLessons(lessons);
 
   return { lessons, currentId: latestId(lessons) };
 }
 
 function latestId(lessons) {
   return lessons.reduce((max, l) => Math.max(max, l.id), 0);
+}
+
+function mergeDefaultLessons(lessons) {
+  DEFAULT_LESSONS.forEach(def => {
+    if (!lessons.some(l => l.id === def.id)) {
+      lessons.push(JSON.parse(JSON.stringify(def)));
+    }
+  });
 }
 
 function sortedLessons() {
@@ -845,7 +875,21 @@ function getStudyEmoji(word) {
     thinking: "💭",
     asked: "❓",
     fished: "🐟",
-    catching: "⚾"
+    catching: "⚾",
+    like: "😊",
+    find: "🔎",
+    bike: "🚲",
+    side: "↔️",
+    nine: "9️⃣",
+    write: "✍️",
+    mine: "🙋",
+    ride: "🚴",
+    white: "⚪",
+    eye: "👁️",
+    hide: "🙈",
+    ice: "🧊",
+    inside: "📦",
+    five: "5️⃣"
   };
   return map[(word || "").toLowerCase()] || "🖼️";
 }
