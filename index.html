@@ -248,6 +248,12 @@
     width: 100%;
     padding: 10px 8px;
   }
+  .study-pic {
+    font-size: 5.5rem;
+    line-height: 1;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 6px 0 rgba(0, 0, 0, .12));
+  }
   .study-word {
     font-size: 2rem;
     font-weight: 900;
@@ -931,7 +937,37 @@ function getStudyEmoji(word) {
     hide: "🙈",
     ice: "🧊",
     inside: "📦",
-    five: "5️⃣"
+    five: "5️⃣",
+    // Lesson 22 (long i / y)
+    sky: "🌤️",
+    pie: "🥧",
+    tiny: "🐜",
+    cry: "😢",
+    lion: "🦁",
+    tie: "👔",
+    why: "🤔",
+    by: "👉",
+    try: "🎯",
+    tiger: "🐯",
+    high: "⛰️",
+    lie: "🛏️",
+    my: "👦",
+    fly: "🪰",
+    // Lesson 23 (double-consonant -ing / -ed)
+    dropping: "🫳",
+    cutting: "✂️",
+    dropped: "⬇️",
+    spotted: "👀",
+    stopping: "🛑",
+    hopped: "🦘",
+    jogged: "🏃",
+    jogging: "🏃‍♂️",
+    running: "💨",
+    shopped: "🛍️",
+    hopping: "🐰",
+    stopped: "✋",
+    dotted: "🔴",
+    shopping: "🛒"
   };
   return map[(word || "").toLowerCase()] || "🖼️";
 }
@@ -1009,13 +1045,11 @@ function renderStudyCard() {
     progress.textContent = "";
     return;
   }
-  const decorators = getWordDecorations(w.word)
-    .map(d => `<span class="study-decor" style="top:${d.top};left:${d.left};font-size:${d.size};transform:rotate(${d.rotate});">${d.emoji}</span>`)
-    .join("");
+  const mainEmoji = getStudyEmoji(w.word);
   card.innerHTML = `
     <div class="study-visual-card">
-      ${decorators}
       <div class="study-word-wrap">
+        <div class="study-pic">${mainEmoji}</div>
         <div class="study-word">${escapeText(w.word)}</div>
       </div>
     </div>
