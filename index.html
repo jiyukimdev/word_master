@@ -726,6 +726,27 @@ const DEFAULT_LESSONS = [
     ],
     perfectScores: emptyScores(),
   },
+  {
+    // Level 2 · Lesson 25 (long o sound)
+    id: 25,
+    words: [
+      { word: "go",     meaning: "to move to another place",                       sentence: "Let's ___ to the park." },
+      { word: "yellow", meaning: "the color of the sun",                           sentence: "The sun is ___ and bright." },
+      { word: "home",   meaning: "the place where you live at",                    sentence: "I go ___ after school." },
+      { word: "rope",   meaning: "a long, thick string",                           sentence: "We jump over the ___." },
+      { word: "grow",   meaning: "to get bigger",                                  sentence: "Plants ___ in the sun." },
+      { word: "know",   meaning: "to have information about something",            sentence: "I ___ the answer." },
+      { word: "no",     meaning: "the opposite of yes",                            sentence: "She said ___ to the cookie." },
+      { word: "nose",   meaning: "the part of your face you smell with",           sentence: "My ___ can smell flowers." },
+      { word: "hope",   meaning: "to want something good to happen",               sentence: "I ___ it is sunny tomorrow." },
+      { word: "stone",  meaning: "a small, hard piece of rock",                    sentence: "I found a smooth ___ by the river." },
+      { word: "snow",   meaning: "soft, white ice that falls from the sky",        sentence: "The ___ is cold and white." },
+      { word: "so",     meaning: "a word used to show what happens next",          sentence: "It was raining, ___ we stayed inside." },
+      { word: "hole",   meaning: "an empty space in something",                    sentence: "There is a ___ in my sock." },
+      { word: "joke",   meaning: "something funny that makes people laugh",        sentence: "Dad told a funny ___." },
+    ],
+    perfectScores: emptyScores(),
+  },
 ];
 
 let store = loadStore();
@@ -988,7 +1009,22 @@ function getStudyEmoji(word) {
     hopping: "🐰",
     stopped: "✋",
     dotted: "🔴",
-    shopping: "🛒"
+    shopping: "🛒",
+    // Lesson 25 (long o)
+    go: "🏃‍♂️",
+    yellow: "🌼",
+    home: "🏠",
+    rope: "🪢",
+    grow: "🌱",
+    know: "🧠",
+    no: "🙅",
+    nose: "👃",
+    hope: "🤞",
+    stone: "🪨",
+    snow: "❄️",
+    so: "➡️",
+    hole: "🕳️",
+    joke: "😂"
   };
   return map[(word || "").toLowerCase()] || "🖼️";
 }
