@@ -768,6 +768,27 @@ const DEFAULT_LESSONS = [
     ],
     perfectScores: emptyScores(),
   },
+  {
+    // Level 2 · Lesson 27 (oo / long vowel sight words)
+    id: 27,
+    words: [
+      { word: "zoo",    meaning: "a place where people can see animals",                                     sentence: "We saw a lion at the ___." },
+      { word: "too",    meaning: "more than you need or also",                                               sentence: "I want to go ___." },
+      { word: "to",     meaning: "a word used to show where someone is going or what they are going to do",  sentence: "I go ___ school every day." },
+      { word: "do",     meaning: "to perform an action or get something done",                               sentence: "I ___ my homework after dinner." },
+      { word: "new",    meaning: "something that is not old or has just been made",                          sentence: "I got a ___ bike for my birthday." },
+      { word: "room",   meaning: "a space inside a house or building",                                       sentence: "My ___ has a big window." },
+      { word: "food",   meaning: "something that people and animals eat",                                    sentence: "I like the ___ at this place." },
+      { word: "who",    meaning: "a word used to ask about a person",                                        sentence: "___ is at the door?" },
+      { word: "blue",   meaning: "the color of the sky on a clear day",                                      sentence: "The sky is ___ today." },
+      { word: "school", meaning: "a place where children go to learn",                                       sentence: "I ride the bus to ___." },
+      { word: "tooth",  meaning: "you use to bite and chew food",                                            sentence: "My ___ hurts a little." },
+      { word: "soon",   meaning: "in a short time; not long from now",                                       sentence: "Dad will be home ___." },
+      { word: "moon",   meaning: "the bright object we can see in the night sky",                            sentence: "The ___ shines at night." },
+      { word: "two",    meaning: "the number 2; one more than one",                                          sentence: "I have ___ cats." },
+    ],
+    perfectScores: emptyScores(),
+  },
 ];
 
 let store = loadStore();
@@ -1060,7 +1081,22 @@ function getStudyEmoji(word) {
     roll: "🎲",
     most: "🥇",
     hold: "🤲",
-    told: "🗣️"
+    told: "🗣️",
+    // Lesson 27 (oo / long vowel sight words)
+    zoo: "🦁",
+    too: "➕",
+    to: "➡️",
+    do: "✅",
+    new: "🆕",
+    room: "🛏️",
+    food: "🍽️",
+    who: "❓",
+    blue: "🟦",
+    school: "🏫",
+    tooth: "🦷",
+    soon: "⏰",
+    moon: "🌙",
+    two: "2️⃣"
   };
   return map[(word || "").toLowerCase()] || "🖼️";
 }
